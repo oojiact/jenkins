@@ -1,0 +1,20 @@
+Jenkins Installed Plugins List
+I need a way to get a list of plugins so that I can use them with docker jenkins in the format <plugin>: <version>
+
+1. Get the jenkins cli.
+The jenkins CLI will allow us to interact with our jenkins server from the command line. We can get it with a simple curl call.
+
+curl 'localhost:8080/jnlpJars/jenkins-cli.jar' > jenkins-cli.jar
+
+
+2. Create a groovy script.
+We need to create a groovy script to parse the information we receive from the jenkins API. This will output each plugin with its version. Save the following as plugins.groovy.
+
+def plugins = jenkins.model.Jenkins.instance.getPluginManager().getPlugins()
+plugins.each {println "${it.getShortName()}: ${it.getVersion()}"}
+
+
+3. Call the Jenkins API.
+Use jenkins-cli.jar to call the jenkins server where it is located (localhost:8080) in this case with the username and password you use for login and then output the results to plugins.txt
+
+java -jar jenkins-cli.jar -s http://localhost:8080 groovy --username "admin" --password "admin" = < plugins.groovy > plugins.txt
